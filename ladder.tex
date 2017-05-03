@@ -1,0 +1,76 @@
+\documentclass[]{article}
+\usepackage{tikz}
+\usepackage[utf8]{inputenc} % Définition langue
+\usepackage[T1]{fontenc} % Définition langue
+\usepackage[frenchb]{babel} % Définition langue
+\usepackage{Ladder}
+
+
+
+
+
+
+\begin{document}
+
+\begin{figure}
+\
+\begin{tikzpicture}
+\LadderLine % Début d'une ligne de ladder
+
+\LadderNO{bla}{I1.0} % Contact NO
+
+\startParallel % Il y aura le début d'une section parrallèle après le contact NO
+
+\LadderNC{bli}{M0} % Contact NC
+
+
+\setParallel % La fin de la section parrallèle se situe après le contact NC, on définit ensuite cette section parallèle
+\LadderNO{blou}{I1.0}
+\LadderNO{blo}{I1.0}
+\unsetParallel % Fin de la définition de la section parrallèle
+
+\LadderB{blu}{M1} % On met une "bobine"
+
+\LadderNO[P]{ble}{I1.0}
+
+\startParallel
+
+\LadderB[R]{bleu}{M1} % Bobine "R" reset
+
+\setParallel
+\LadderB[S]{bleu}{M1}
+\unsetParallel
+
+
+% Nouvelle ligne %
+\LadderLine
+
+\LadderNO{bla}{I1.0}
+
+\startParallel
+
+\LadderNC{bli}{M0}
+\LadderNO[P]{blou}{I1.0}
+
+\setParallel
+\LadderNO{blo}{I1.0}
+\unsetParallel
+
+\LadderB{blu}{M1}
+
+\LadderNO{ble}{I1.0}
+
+\startParallel
+
+\LadderB{bleu}{M1}{R}
+
+\setParallel
+\LadderNO{ble}{I1.0}
+\LadderB[S]{bleu}{M1}
+\unsetParallel
+
+\end{tikzpicture}
+\caption{}
+\end{figure}
+
+\end{document}

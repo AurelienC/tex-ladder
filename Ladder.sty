@@ -1,0 +1,129 @@
+\NeedsTeXFormat{LaTeX2e}[1999/01/01]
+\ProvidesPackage{Ladder}[2013/09/17]
+  
+%chargement des extensions requises au bon fonctionnement de l'extension et des documents
+\RequirePackage{tikz} % TikZ
+\RequirePackage{ifthen}
+\RequirePackage{calc}
+ 
+
+
+
+\newcounter{nextY}%
+\newcounter{nextYPar}%
+\newcounter{nextX}%
+\newcounter{currentY}%
+\newcounter{currentX}%
+\newcounter{tempCurrentY}%
+\newcounter{startPar}%
+\newcounter{stopPar}%
+\newcounter{memCurrentX}%
+\newcounter{memCurrentY}%
+
+
+
+%%% NOUVELLE LIGNE DE LADDER %%%
+\newcommand{\LadderLine}[0]{
+	
+	% On met à jour les variables
+	\setcounter{currentX}{0}
+	\setcounter{nextX}{0}
+	\setcounter{currentY}{\value{nextY}}
+	
+}
+
+%%% TEXTE %%%
+\newcommand{\LadderText}[3][]{	
+	\draw[text centered](\value{currentX}+1,\value{currentY}+1) node {\textbf{#2}};
+	\draw[text centered](\value{currentX}+1,\value{currentY}+0.5) node {\textit{#3}};
+	\draw[text centered](\value{currentX}+1,\value{currentY}) node {\texttt{\LARGE{#1}}};
+}
+
+%%% CONTACT NO %%%
+\newcommand{\LadderNO}[3][]{
+	
+	% On met à jour les variables
+	\setcounter{currentX}{\value{nextX}}
+	\setcounter{tempCurrentY}{\value{currentY}-2}
+	\ifthenelse{\value{nextY}>\value{tempCurrentY}}{\setcounter{nextY}{\value{tempCurrentY}}}{}
+	\ifthenelse{\value{nextYPar}>\value{tempCurrentY}}{\setcounter{nextYPar}{\value{tempCurrentY}}}{}
+	\addtocounter{nextX}{2}
+		
+	% On dessine la forme
+	\draw(\value{currentX}+0.75,\value{currentY}+0.25) -- (\value{currentX}+0.75,\value{currentY}-0.25); % 1ère barre du NO
+	\draw(\value{currentX}+1.25,\value{currentY}+0.25) -- (\value{currentX}+1.25,\value{currentY}-0.25); % 2ème barre du NO
+	\draw(\value{currentX},\value{currentY}) -- (\value{currentX}+0.75,\value{currentY}); % Raccord
+	\draw(\value{currentX}+1.25,\value{currentY}) -- (\value{nextX},\value{currentY}); % Raccord	
+	
+	\LadderText[#1]{#2}{#3}
+}
+
+%%% CONTACT NC %%%
+\newcommand{\LadderNC}[3][]{
+	
+	% On met à jour les variables
+	\setcounter{currentX}{\value{nextX}}
+	\setcounter{tempCurrentY}{\value{currentY}-2}
+	\ifthenelse{\value{nextY}>\value{tempCurrentY}}{\setcounter{nextY}{\value{tempCurrentY}}}{}
+	\ifthenelse{\value{nextYPar}>\value{tempCurrentY}}{\setcounter{nextYPar}{\value{tempCurrentY}}}{}
+	\addtocounter{nextX}{2}
+		
+	% On dessine la forme
+	\draw(\value{currentX}+0.75,\value{currentY}+0.25) -- (\value{currentX}+0.75,\value{currentY}-0.25) -- (\value{currentX}+1.25,\value{currentY}+0.25) -- (\value{currentX}+1.25,\value{currentY}-0.25); % Contact NC
+	\draw(\value{currentX},\value{currentY}) -- (\value{currentX}+0.75,\value{currentY}); % Raccord
+	\draw(\value{currentX}+1.25,\value{currentY}) -- (\value{nextX},\value{currentY}); % Raccord
+	
+	
+	\LadderText[#1]{#2}{#3}		
+}
+
+%%% BOBINE %%%
+\newcommand{\LadderB}[3][]{
+	
+	% On met à jour les variables
+	\setcounter{currentX}{\value{nextX}}
+	\setcounter{tempCurrentY}{\value{currentY}-2}
+	\ifthenelse{\value{nextY}>\value{tempCurrentY}}{\setcounter{nextY}{\value{tempCurrentY}}}{}
+	\ifthenelse{\value{nextYPar}>\value{tempCurrentY}}{\setcounter{nextYPar}{\value{tempCurrentY}}}{}
+	\addtocounter{nextX}{2}
+		
+	% On dessine la forme
+	\draw (\value{currentX}+1,\value{currentY}) circle (0.3);
+	\draw(\value{currentX},\value{currentY}) -- (\value{currentX}+0.7,\value{currentY}); % Raccord
+	\draw(\value{currentX}+1.3,\value{currentY}) -- (\value{nextX},\value{currentY}); % Raccord
+	
+	
+	\LadderText[#1]{#2}{#3}	
+}
+
+%%% MEMORISATION DEBUT PARALLELE %%%
+\newcommand{\startParallel}[0]{
+\setcounter{startPar}{\value{nextX}} % On stocke le début en X de la section parallèle
+}
+
+%%% DEBUT PARALLELE %%%
+\newcommand{\setParallel}[0]{
+\setcounter{stopPar}{\value{nextX}}%
+
+\draw(\value{startPar},\value{currentY}) -- (\value{startPar},\value{nextYPar}); % Barre verticale
+
+\setcounter{memCurrentX}{\value{nextX}}%
+\setcounter{memCurrentY}{\value{currentY}}%
+
+\setcounter{nextX}{\value{startPar}}%
+\setcounter{currentY}{\value{nextYPar}}%
+}
+
+%%% FIN PARALLELE %%%
+\newcommand{\unsetParallel}[0]{
+
+% On teste si la section parallèle est plus grande que la section "normale"
+\ifthenelse{\value{nextX}>\value{memCurrentX}}{}{\draw(\value{nextX},\value{currentY}) -- (\value{stopPar},\value{currentY}) -- (\value{stopPar},\value{memCurrentY});}
+
+\ifthenelse{\value{nextX}>\value{memCurrentX}}{\draw (\value{nextX},\value{currentY}) -- (\value{nextX},\value{memCurrentY}) -- (\value{memCurrentX},\value{memCurrentY});}{\setcounter{nextX}{\value{memCurrentX}}}
+
+
+
+\setcounter{currentY}{\value{memCurrentY}}
+\setcounter{nextYPar}{0}
+}
