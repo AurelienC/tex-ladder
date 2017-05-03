@@ -1,6 +1,8 @@
 # Lader TeX package
 _This package permit the creation of simple ladder diagram into TeX documents._
 
+[Example](https://github.com/AurelienC/tex-ladder/blob/master/ladder.pdf)
+
 ## Usage
 The code must be inserted between en `tikzpicture` section.
 
